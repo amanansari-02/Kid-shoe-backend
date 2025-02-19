@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.post("/item", addItem);
 router.get("/items", getItems);
-router.put("/item/:id", editItem);
+// router.put("/item/:id", editItem);
 
 module.exports = router;

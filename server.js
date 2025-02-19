@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
+const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoutes = require("./src/routes/usersRoutes");
 const itemsRoutes = require("./src/routes/itemsRoutes");
@@ -8,6 +9,7 @@ const itemsRoutes = require("./src/routes/itemsRoutes");
 const port = process.env.PORT;
 mongoose.connect(process.env.MONGO_URI);
 const db = mongoose.connection;
+app.use(cors());
 
 // Connect mongodb
 db.on("error", console.error.bind(console, "MongoDB connection error:"));

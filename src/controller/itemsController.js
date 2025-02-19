@@ -60,7 +60,7 @@ exports.addItem = async (req, res) => {
       });
     });
 
-    const { name, description, price, type } = req.body;
+    const { name, price, type } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "Image is required" });
@@ -68,7 +68,7 @@ exports.addItem = async (req, res) => {
 
     const newItem = await Item.create({
       name,
-      description,
+      // description,
       price,
       image: req.file.filename,
       type,
@@ -102,27 +102,27 @@ exports.getItems = async (req, res) => {
   }
 };
 
-exports.editItem = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const item = req.body;
+// exports.editItem = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const item = req.body;
 
-    const itemUpdate = await Item.findByIdAndUpdate({ _id: id }, item, {
-      new: true,
-    });
+//     const itemUpdate = await Item.findByIdAndUpdate({ _id: id }, item, {
+//       new: true,
+//     });
 
-    if (itemUpdate) {
-      return res.status(STATUS_CODE.OK).json({
-        status: STATUS_CODE.OK,
-        message: SUCCESS_MESSAGE.ITEM_UPDATED,
-      });
-    } else {
-      return res.status(STATUS_CODE.OK).json({
-        status: STATUS_CODE.BAD_REQUEST,
-        message: ERROR_MESSAGE.ITEM_NOT_UPDATED,
-      });
-    }
-  } catch (error) {
-    console.error("editItem error: ", error);
-  }
-};
+//     if (itemUpdate) {
+//       return res.status(STATUS_CODE.OK).json({
+//         status: STATUS_CODE.OK,
+//         message: SUCCESS_MESSAGE.ITEM_UPDATED,
+//       });
+//     } else {
+//       return res.status(STATUS_CODE.OK).json({
+//         status: STATUS_CODE.BAD_REQUEST,
+//         message: ERROR_MESSAGE.ITEM_NOT_UPDATED,
+//       });
+//     }
+//   } catch (error) {
+//     console.error("editItem error: ", error);
+//   }
+// };
