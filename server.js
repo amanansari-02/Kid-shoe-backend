@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const mongoose = require("mongoose");
 const userRoutes = require("./src/routes/usersRoutes");
+const itemsRoutes = require("./src/routes/itemsRoutes");
 
 const port = process.env.PORT;
 mongoose.connect(process.env.MONGO_URI);
@@ -17,8 +18,14 @@ db.on("error", (error) => {
   console.error("MongoDB connection error:", error);
 });
 
+// API's
 app.use(express.json());
 app.use("/api", userRoutes);
+app.use("/api", itemsRoutes);
+
+// for image
+app.use("/public", express.static("public"));
+
 app.get("/", (req, res) => {
   res.send("Hello, world");
 });
