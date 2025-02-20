@@ -72,6 +72,7 @@ exports.addItem = async (req, res) => {
       price,
       image: req.file.filename,
       type,
+      category,
     });
 
     return res.status(STATUS_CODE.CREATED).json({
