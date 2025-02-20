@@ -7,7 +7,7 @@ const {
 const router = express.Router();
 
 router.post("/item", addItem);
-router.get("/items", getItems);
+router.get("/items/:category", getItems);
 // router.put("/item/:id", editItem);
 
 module.exports = router;
