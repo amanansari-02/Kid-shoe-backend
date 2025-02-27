@@ -5,6 +5,7 @@ const itemScehma = new mongoose.Schema({
   price: { type: String, required: true },
   image: { type: String, required: true },
   type: { type: String, required: true },
+  category: { type: String, required: true },
 });
 
 const Items = mongoose.model("items", itemScehma);

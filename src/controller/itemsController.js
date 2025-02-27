@@ -72,6 +72,7 @@ exports.addItem = async (req, res) => {
       price,
       image: req.file.filename,
       type,
+      category,
     });
 
     return res.status(STATUS_CODE.CREATED).json({
@@ -87,7 +88,9 @@ exports.addItem = async (req, res) => {
 
 exports.getItems = async (req, res) => {
   try {
-    const items = await Items.find().lean();
+    const category = req.params.category;
+    console.log("category", category);
+    const items = await Items.find({ category: category }).lean();
     items.forEach((item) => {
       item.photo = process.env.IMAGE_URL + item.image;
     });
