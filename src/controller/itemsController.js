@@ -5,6 +5,7 @@ const STATUS_CODE = require("../constant/statusCode");
 const SUCCESS_MESSAGE = require("../constant/successMessage");
 const Items = require("../models/itemsModel");
 const ERROR_MESSAGE = require("../constant/errorMessage");
+const Order = require("../models/orderModel");
 
 const uploadFilePath = path.resolve(__dirname, "../..", "public/products");
 
@@ -60,7 +61,7 @@ exports.addItem = async (req, res) => {
       });
     });
 
-    const { name, price, type } = req.body;
+    const { name, price, type, category } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "Image is required" });
@@ -89,8 +90,10 @@ exports.addItem = async (req, res) => {
 exports.getItems = async (req, res) => {
   try {
     const category = req.params.category;
-    console.log("category", category);
-    const items = await Items.find({ category: category }).lean();
+
+    const items = await Items.find(
+      category === "All" ? {} : { category: category }
+    ).lean();
     items.forEach((item) => {
       item.photo = process.env.IMAGE_URL + item.image;
     });
@@ -99,6 +102,41 @@ exports.getItems = async (req, res) => {
       status: STATUS_CODE.OK,
       message: SUCCESS_MESSAGE.ALL_ITMES,
       data: items,
+    });
+  } catch (error) {
+    console.error("getItems error: ", error);
+  }
+};
+
+exports.getItemsByGender = async (req, res) => {
+  try {
+    const gender = req.params.gender;
+
+    const items = await Items.find({ type: gender }).lean();
+    items.forEach((item) => {
+      item.photo = process.env.IMAGE_URL + item.image;
+    });
+
+    return res.status(STATUS_CODE.OK).json({
+      status: STATUS_CODE.OK,
+      message: SUCCESS_MESSAGE.ALL_ITMES,
+      data: items,
+    });
+  } catch (error) {
+    console.error("getItems error: ", error);
+  }
+};
+
+exports.getItemById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const item = await Items.findById(id).lean();
+    item.photo = process.env.IMAGE_URL + item.image;
+
+    return res.status(STATUS_CODE.OK).json({
+      status: STATUS_CODE.OK,
+      message: SUCCESS_MESSAGE.ALL_ITMES,
+      data: item,
     });
   } catch (error) {
     console.error("getItems error: ", error);
@@ -129,3 +167,53 @@ exports.getItems = async (req, res) => {
 //     console.error("editItem error: ", error);
 //   }
 // };
+
+exports.addOrder = async (req, res) => {
+  const { email, itemId, name } = req.body;
+  const newItem = await Order.create({
+    name,
+    email,
+    itemId,
+  });
+
+  return res.status(STATUS_CODE.CREATED).json({
+    status: STATUS_CODE.CREATED,
+    message: "Order added sucessfully",
+    data: newItem,
+  });
+};
+
+exports.getOrders = async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    if (!email) {
+      return res.status(400).json({
+        status: 400,
+        message: "Email parameter is missing",
+      });
+    }
+
+    const orders = await Order.find({ email: email }).populate("itemId").lean();
+
+    const data = orders.map((order) => ({
+      ...order,
+      itemId: {
+        ...order.itemId,
+        image: process.env.IMAGE_URL + order.itemId.image, // Fixed syntax
+      },
+    }));
+
+    return res.status(200).json({
+      status: 200,
+      message: "Orders retrieved successfully",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "Error fetching orders",
+      error: error.message,
+    });
+  }
+};
